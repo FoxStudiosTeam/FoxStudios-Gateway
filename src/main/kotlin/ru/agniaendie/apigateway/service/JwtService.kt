@@ -13,7 +13,7 @@ import java.util.Date;
 class JwtService {
     @Value("\${jwt.secret}")
     private val secret: String? = null
-
+    //da
     fun getClaims(token: String?): Claims {
         return Jwts.parser().setSigningKey(Base64.encodeBase64String(secret!!.toByteArray())).parseClaimsJws(token).body
     }
