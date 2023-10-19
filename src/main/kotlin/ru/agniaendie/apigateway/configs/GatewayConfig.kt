@@ -8,8 +8,6 @@ import org.springframework.cloud.gateway.route.builder.PredicateSpec
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.stereotype.Component
-
 @RefreshScope
 @Configuration
 class GatewayConfig(@Autowired var filter: AuthenticationFilter) {
@@ -19,7 +17,7 @@ class GatewayConfig(@Autowired var filter: AuthenticationFilter) {
         println(filter)
         return builder.routes()
             .route(
-                "authserver"
+                "auth-server"
             ) { r: PredicateSpec ->
                 r.path("/main/test")
                     .filters { f: GatewayFilterSpec ->
@@ -31,7 +29,7 @@ class GatewayConfig(@Autowired var filter: AuthenticationFilter) {
             }.route(
                 "posts"
             ) { r: PredicateSpec ->
-                r.path("/posts/main/get/**")
+                r.path("/posts/main/**")
                     .filters { f: GatewayFilterSpec ->
                         f.filter(
                             filter
