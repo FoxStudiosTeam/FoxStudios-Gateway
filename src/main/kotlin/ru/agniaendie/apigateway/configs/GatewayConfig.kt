@@ -1,21 +1,22 @@
 package ru.agniaendie.apigateway.configs
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.gateway.route.RouteLocator
 import org.springframework.cloud.gateway.route.builder.GatewayFilterSpec
 import org.springframework.cloud.gateway.route.builder.PredicateSpec
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
 
-
+@RefreshScope
 @Configuration
-class GatewayConfig(@Autowired filter : AuthenticationFilter) {
-    @Autowired
-    private val filter: AuthenticationFilter? = null
+class GatewayConfig(@Autowired var filter: AuthenticationFilter) {
 
     @Bean
     fun routes(builder: RouteLocatorBuilder): RouteLocator? {
+        println(filter)
         return builder.routes()
             .route(
                 "authserver"
@@ -26,7 +27,17 @@ class GatewayConfig(@Autowired filter : AuthenticationFilter) {
                             filter
                         )
                     }
-                    .uri("lb://user-service")
+                    .uri("lb://auth-server/")
+            }.route(
+                "posts"
+            ) { r: PredicateSpec ->
+                r.path("/posts/main/get/**")
+                    .filters { f: GatewayFilterSpec ->
+                        f.filter(
+                            filter
+                        )
+                    }
+                    .uri("lb://posts/")
             }
             .build()
     }

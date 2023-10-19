@@ -1,6 +1,7 @@
 package ru.agniaendie.apigateway.service
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct
 import org.apache.commons.codec.binary.Base64
@@ -19,10 +20,11 @@ class JwtService {
     }
 
     fun isExpired(token: String?): Boolean {
-        return try {
+        return try{
             getClaims(token).expiration.before(Date())
-        } catch (e: Exception) {
             false
+        }catch (e: ExpiredJwtException){
+            true
         }
     }
 }
