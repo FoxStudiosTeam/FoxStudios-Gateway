@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.stereotype.Component
@@ -24,8 +25,8 @@ class AuthenticationFilter(
 ) : GatewayFilter {
     var logger = LoggerFactory.getLogger(AuthenticationFilter::class.java)!!
 
-    override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void?>?{
-        try{
+    override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void?>? {
+        try {
             val token = exchange.request.headers["Authorization"]!![0].substring(7)
             if (validator.isSecured.test(exchange.request)) {
                 logger.warn("entered")
@@ -36,7 +37,7 @@ class AuthenticationFilter(
                     return onError(exchange, HttpStatus.UNAUTHORIZED)
                 }
             }
-        }catch (e:NullPointerException){
+        } catch (e: NullPointerException) {
             logger.error("token is null")
             return onError(exchange, HttpStatus.UNAUTHORIZED)
         }
