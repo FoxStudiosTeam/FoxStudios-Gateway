@@ -8,6 +8,7 @@ import org.springframework.cloud.gateway.route.builder.PredicateSpec
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+
 @RefreshScope
 @Configuration
 class GatewayConfig(@Autowired var filter: AuthenticationFilter) {
@@ -17,7 +18,7 @@ class GatewayConfig(@Autowired var filter: AuthenticationFilter) {
         println(filter)
         return builder.routes()
             .route(
-                "auth-server"
+                "auth-server-corp"
             ) { r: PredicateSpec ->
                 r.path("/main/test")
                     .filters { f: GatewayFilterSpec ->
@@ -36,6 +37,22 @@ class GatewayConfig(@Autowired var filter: AuthenticationFilter) {
                         )
                     }
                     .uri("lb://posts/")
+            }.route(
+                "corporative-swagger"
+            ) { r: PredicateSpec ->
+                r.path("/corporative/swagger-ui/**").uri("lb://corporative/")
+            }.route("corporative-open-api-filter") { r: PredicateSpec ->
+                r.path("/v3/**").uri("lb://corporative/")
+            }.route(
+                "corporative"
+            ) { r: PredicateSpec ->
+                r.path("/corporative/**")
+                    .filters { f: GatewayFilterSpec ->
+                        f.filter(
+                            filter
+                        )
+                    }
+                    .uri("lb://corporative/")
             }
             .build()
     }
