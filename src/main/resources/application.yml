@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: 'true'
+          lower-case-service-id: 'true'
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+#              - "http://localhost:3000"
+            #              - "https://hack.foxworld.online"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+  application:
+    name: foxway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:8081/eureka
+server:
+  port: '8082'
+jwt:
+  secret: foxstudios
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          client: trace
+    org:
+      springframework:
+        cloud:
+          gateway: debug
